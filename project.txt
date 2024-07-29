@@ -1,0 +1,14 @@
+def find_most_similar_invoice(input_invoice_path, database_paths):
+    input_text = extract_text_from_pdf(input_invoice_path)
+    
+    database_texts = [extract_text_from_pdf(path) for path in database_paths]
+    all_texts = [input_text] + database_texts
+    
+    features, vectorizer = extract_features(all_texts)
+    similarity_matrix = calculate_similarity(features)
+    
+    # Exclude the first row which is the input invoice itself
+    similarities = similarity_matrix[0, 1:]
+    most_similar_index = similarities.argmax()
+    
+    return database_paths[most_similar_index], similarities[most_similar_index]
